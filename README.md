@@ -5,13 +5,13 @@
 </p>
 
 <h1 align="center">
-  💨
+
   Prosjektnavn
-  💨
+
 </h1>
 
-
-![Static Badge](https://img.shields.io/badge/TMA4851-Data%26Minds-blue?style=for-the-badge&color=blue)  ![Static Badge](https://img.shields.io/badge/Contributors-6-green?style=for-the-badge&color=blue)
+[![TMA Badge](https://img.shields.io/badge/TMA4851-Data%26Mind-blue?style=for-the-badge)](https://www.ntnu.no/eit/tma4851)
+[![Contributor Badge](https://img.shields.io/badge/Contributors-6-blue?style=for-the-badge)](https://github.com/simeeid/TMA4851_Group2_2024/graphs/contributors)  
 
 
 ## Description 
