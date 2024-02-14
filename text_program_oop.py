@@ -5,8 +5,7 @@ from tkinter import Tk
 class BasicView():
 
     def __init__(self):
-        self.root = Tk()
-        # self.text_widget = 
+        self.root = Tk() 
         self.root.geometry('500x500')
         self.root.minsize(500, 500)
 
@@ -27,6 +26,21 @@ class BasicView():
             self.dark_mode.set(1)
             self.toggle_dark_mode()
 
+        def mouse_event(event):
+            x, y = event.x / self.root.winfo_width(), event.y / self.root.winfo_height()
+
+            print(x, y)
+
+            if y <= 0.25:
+                pass
+            elif y > 0.25 or y <= 0.75:
+                pass
+            elif y > 0.75:
+                pass
+
+            
+
+        self.root.bind("<Motion>", mouse_event)
         self.root.mainloop()
 
     def temp(self, x, y):
