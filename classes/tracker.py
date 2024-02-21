@@ -21,9 +21,6 @@ class Tracker:
     
         self.vec_sacle = 5
         self.game = False
-
-        self.x = np.linspace(-1,1,1000)
-        self.y = self.x
         self.epsilon = 10                   #tolerance for reaching target
 
 
@@ -51,7 +48,6 @@ class Tracker:
                     face_obj = Face(frame,face,gray,self.predictor)
                     forward_vector, nose_top = face_obj.vector, face_obj.nose_top, face_obj.center
                     self.draw_vector(frame, np.array(nose_top), forward_vector, scale=self.vec_sacle, color=(255, 0, 0), thickness=2)
-
                     endeffector = np.array(nose_top + self.vec_sacle*forward_vector,dtype=int)
                     
                 else :
