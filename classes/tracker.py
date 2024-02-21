@@ -24,7 +24,7 @@ class Tracker:
 
         self.x = np.linspace(-1,1,1000)
         self.y = self.x
-        self.epsilon = 5                    #tolerance for reaching target
+        self.epsilon = 10                   #tolerance for reaching target
 
 
     def draw_vector(self, frame, start_point, direction_vector, scale=5, color=(0, 255, 0), thickness=2):
@@ -49,13 +49,11 @@ class Tracker:
             for face in faces:
                 if face is not None:
                     face_obj = Face(frame,face,gray,self.predictor)
-                    forward_vector, nose_top, center = face_obj.vector, face_obj.nose_top, face_obj.center
+                    forward_vector, nose_top = face_obj.vector, face_obj.nose_top, face_obj.center
                     self.draw_vector(frame, np.array(nose_top), forward_vector, scale=self.vec_sacle, color=(255, 0, 0), thickness=2)
 
-                    # gjør om til funksjoner
-                    red_vec = np.array((center[0]-nose_top[0],center[1]-nose_top[1]))                   
-                    endeffector = np.array((center[0]+red_vec[0]+self.vec_sacle*forward_vector[0],
-                                            center[1]+red_vec[1]+self.vec_sacle*forward_vector[1]),dtype=int)
+                    endeffector = np.array(nose_top + self.vec_sacle*forward_vector,dtype=int)
+                    
                 else :
                     print("No face detected")
                                
@@ -70,9 +68,7 @@ class Tracker:
                         self.game = True
                         
             if self.game:
-                target_state = ((self.x-target_cords[0])**2+(self.y-target_cords[1])**2 
-                                - self.epsilon**2 < endeffector[0]**2+endeffector[1]**2).all() # makes circle around 
-                                                                #target (becomes area of target) (bug red dot seems to also count?)
+                target_state = np.linalg.norm(endeffector - target_cords) < self.epsilon
                 if target_state:
                     cv2.circle(frame, (target_cords[0],target_cords[1]), 10, (255, 255, 0), -1)
                     new_cords = np.random.rand(1,2)

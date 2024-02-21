@@ -6,13 +6,12 @@ import numpy as np
 class Face:
     def __init__(self,frame,face,gray,predictor):
         x, y, w, h = face.left(), face.top(), face.width(), face.height()
-        
-        self.center = (int(x+w/2), int(y+h/2))
+        self.center = (int(x), int(y))
         self.landmarks = predictor(gray, face)
         self.draw_landmarks(frame)
         self.vector, self.nose_top = self.get_face_data()
 
-        cv2.circle(frame, (self.center), 10, (0, 0, 255), -1)  
+        cv2.circle(frame, (self.center), 10, (0, 0, 255), -1)
         cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 3)            
 
 
