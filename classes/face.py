@@ -28,4 +28,4 @@ class Face:
         ear_midpoint = (left_ear + right_ear) / 2
         nose_top = np.array([self.landmarks.part(27).x, self.landmarks.part(27).y])
         forward_vector = nose_top - ear_midpoint
-        return forward_vector, nose_top
+        return forward_vector,nose_top

@@ -46,7 +46,7 @@ class Tracker:
             for face in faces:
                 if face is not None:
                     face_obj = Face(frame,face,gray,self.predictor)
-                    forward_vector, nose_top = face_obj.vector, face_obj.nose_top, face_obj.center
+                    forward_vector, nose_top = face_obj.vector, face_obj.nose_top
                     self.draw_vector(frame, np.array(nose_top), forward_vector, scale=self.vec_sacle, color=(255, 0, 0), thickness=2)
                     endeffector = np.array(nose_top + self.vec_sacle*forward_vector,dtype=int)
                     
