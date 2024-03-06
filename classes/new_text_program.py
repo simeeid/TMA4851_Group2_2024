@@ -106,31 +106,27 @@ def run_app():
     # root.bind('<Motion>', mouse_event)
 
     root.mainloop()
+    tracker.running = False
 
 def run_face_tracking():
     global tracker
     tracker = Tracker(shared_data)
     tracker.start_video()
-    # shared_data.append(tracker.get_vertical_angle())
-    # print(shared_data)
-    # a.start_video()
     
 def run_sampling():
     global text_widget
     global shared_data
     global tracker
     global scrolling
-    while True:
-        # print(shared_data)
+    while tracker.running:
         # print("sampling loop: ", tracker.shared_data)
-        # print(text_widget)
 
         if not scrolling:
             scrolling = True
             auto_scroll(text_widget)
 
-
         time.sleep(0.25)
+
 
 # Create threads
 thread1 = threading.Thread(target=run_app)
@@ -140,7 +136,7 @@ thread3 = threading.Thread(target=run_sampling)
 # Start threads
 thread1.start()
 thread2.start()
-time.sleep(4)
+time.sleep(1)
 thread3.start()
 
 # Wait for both threads to complete

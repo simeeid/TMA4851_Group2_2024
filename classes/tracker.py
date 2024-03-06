@@ -24,6 +24,8 @@ class Tracker:
         # self.vertical_angle = 0
         self.shared_data = shared_data                #tolerance for reaching target
 
+        self.running = True
+
     def get_vertical_angle(self):
         return self.vertical_angle
 
@@ -35,7 +37,7 @@ class Tracker:
     def start_video(self):
         # Main tracking loop
         
-        while True:
+        while self.running:
             ret, frame = self.cap.read()
             if not ret:
                 break
@@ -59,7 +61,8 @@ class Tracker:
 
             match cv2.waitKey(1):   # Exit on ESC
                     case 27:
-                        break
+                        self.running = False
+                        
 
 
             cv2.imshow('Frame', frame)
