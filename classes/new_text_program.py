@@ -57,11 +57,13 @@ def run_app():
             # make dark_mode_switch also dark
             dark_mode_switch.configure(bg='black', fg='white', selectcolor='black')
             auto_scroll_switch.configure(bg='black', fg='white', selectcolor='black')
+            frame.configure(fg_color='black')
         else:
             root.configure(bg='white')
             ctk.set_appearance_mode('light')
             dark_mode_switch.configure(bg='white', fg='black', selectcolor='white')
             auto_scroll_switch.configure(bg='white', fg='black', selectcolor='white')
+            frame.configure(fg_color='white')
 
     global scrolling # = False  # Flag to check if auto_scroll is already running
     scrolling = False
@@ -84,7 +86,7 @@ def run_app():
     text_widget.place(relx=0.05, rely=0.025, relwidth=0.9, relheight=0.9)
     text_widget.configure(wrap='word', state='disable')
 
-    frame = ctk.CTkFrame(root, height=32, fg_color='red')
+    frame = ctk.CTkFrame(root, height=32)
     frame.place(relx=0.05, rely=0.925, relwidth=0.9)
 
     load_button = ctk.CTkButton(frame, width=150, text="Load .txt file", command=load_file)
