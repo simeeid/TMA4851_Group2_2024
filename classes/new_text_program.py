@@ -22,11 +22,11 @@ def auto_scroll(textbox):
     mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
     # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
 
-    if auto_scroll_var.get() and tracker.shared_data < -2:
+    if auto_scroll_var.get() and tracker.shared_data < -3:
         textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
 
-    elif auto_scroll_var.get() and tracker.shared_data > 20:
+    elif auto_scroll_var.get() and tracker.shared_data > 6:
         textbox.yview_scroll(-1, 'pixels')  # Scroll up by a small amount
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
 
@@ -129,12 +129,16 @@ thread2 = threading.Thread(target=run_face_tracking)
 thread3 = threading.Thread(target=run_sampling)
 
 # Start threads
-thread1.start()
+time.sleep(2)
 thread2.start()
-time.sleep(4)
+time.sleep(2)
+thread1.start()
+time.sleep(2)
 thread3.start()
 
 # Wait for both threads to complete
-thread1.join()
 thread2.join()
+time.sleep(2)
+thread1.join()
+time.sleep(2)
 thread3.join()

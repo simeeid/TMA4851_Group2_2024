@@ -1,9 +1,10 @@
 import cv2
 import dlib
 import numpy as np
+from filter import LowPassFilter
 
 class Face:
-    def __init__(self, frame, face, gray, predictor, screen_width, screen_height, method='improved'):
+    def __init__(self, frame, face, gray, predictor, screen_width, screen_height, method='improved', translation_filter=None, rotation_filter=None):
         x, y, w, h = face.left(), face.top(), face.width(), face.height()
         self.center = (int(x), int(y))
         self.landmarks = predictor(gray, face)
@@ -18,6 +19,11 @@ class Face:
              [0, 0, 1]], dtype="double"
         )
         self.dist_coeffs = np.zeros((4, 1))  # Assuming no lens distortion
+        
+        # self.rotation_filter = LowPassFilter(0.1)
+        # self.translation_filter = LowPassFilter(0.1)
+        self.rotation_filter = rotation_filter
+        self.translation_filter = translation_filter
         
         # Choose the calculation method
         if method == 'simple':
@@ -71,12 +77,16 @@ class Face:
 
         # Solve for pose
         _, rotation_vector, translation_vector = cv2.solvePnP(model_points, image_points, self.camera_matrix, self.dist_coeffs)
+        smoothed_rotation_vector = self.rotation_filter.apply_filter(rotation_vector)
+        smoothed_translation_vector = self.translation_filter.apply_filter(translation_vector)
 
         # Convert rotation vector to rotation matrix
-        rotation_matrix, _ = cv2.Rodrigues(rotation_vector)
+        # rotation_matrix, _ = cv2.Rodrigues(rotation_vector)
+        rotation_matrix, _ = cv2.Rodrigues(smoothed_rotation_vector)
 
         # Construct a 3x4 projection matrix from the rotation matrix and translation vector
-        projection_matrix = np.hstack((rotation_matrix, translation_vector))
+        # projection_matrix = np.hstack((rotation_matrix, translation_vector))
+        projection_matrix = np.hstack((rotation_matrix, smoothed_translation_vector))
 
         # Now you can safely decompose the projection matrix
         euler_angles = cv2.decomposeProjectionMatrix(projection_matrix)[-1]
@@ -87,7 +97,7 @@ class Face:
 
         # Project a 3D point to draw the direction vector
         nose_end_point3D = np.array([(0.0, 0.0, 1000.0)])
-        nose_end_point2D, _ = cv2.projectPoints(nose_end_point3D, rotation_vector, translation_vector, self.camera_matrix, self.dist_coeffs)
+        nose_end_point2D, _ = cv2.projectPoints(nose_end_point3D, smoothed_rotation_vector, smoothed_translation_vector, self.camera_matrix, self.dist_coeffs)
 
         # Use draw_vector to draw the line
         p1 = (int(image_points[0][0]), int(image_points[0][1]))
