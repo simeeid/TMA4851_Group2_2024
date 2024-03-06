@@ -132,7 +132,7 @@ thread3 = threading.Thread(target=run_sampling)
 # Start threads
 thread1.start()
 thread2.start()
-time.sleep(1)
+time.sleep(4)
 thread3.start()
 
 # Wait for both threads to complete
