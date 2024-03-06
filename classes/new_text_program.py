@@ -4,33 +4,29 @@ import time
 import customtkinter as ctk
 from tkinter import filedialog, END, Checkbutton, IntVar
 from tkinter import Tk
-# import pyautogui
 
 # Shared data structure for communication, e.g., a list, dict, Queue, etc.
 global shared_data
-shared_data = 0
 global text_widget
 global root
 global auto_scroll_var
 global tracker
 global scrolling
+shared_data = 0
 
 def auto_scroll(textbox):
     """Scrolls the textbox at a constant speed."""
     global scrolling
     global tracker
     # y_value = tracker.shared_data / 25
-    # print("auto scroll func: ", scrolling, tracker.shared_data)
 
     mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
     # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
 
-    # if auto_scroll_var.get() and tracker.shared_data > 0.75:
     if auto_scroll_var.get() and tracker.shared_data < -2:
         textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
 
-    # elif auto_scroll_var.get() and tracker.shared_data < 0.25:
     elif auto_scroll_var.get() and tracker.shared_data > 20:
         textbox.yview_scroll(-1, 'pixels')  # Scroll up by a small amount
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
@@ -52,7 +48,6 @@ def run_app():
     def toggle_dark_mode():
         if dark_mode.get():
             root.configure(bg='black')
-            # text_widget.configure(bg='black', fg='white', state='normal')
             ctk.set_appearance_mode('dark')
             # make dark_mode_switch also dark
             dark_mode_switch.configure(bg='black', fg='white', selectcolor='black')
@@ -121,7 +116,6 @@ def run_sampling():
     global tracker
     global scrolling
     while tracker.running:
-        # print("sampling loop: ", tracker.shared_data)
 
         if not scrolling:
             scrolling = True

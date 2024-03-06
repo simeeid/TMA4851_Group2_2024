@@ -66,10 +66,11 @@ class Tracker:
 
 
             cv2.imshow('Frame', frame)
+            
         # Release and close
         self.cap.release()
         cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
-    Tracker([]).start_video()
+    Tracker(0).start_video()
