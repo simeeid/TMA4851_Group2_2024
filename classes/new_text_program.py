@@ -4,10 +4,39 @@ import time
 import customtkinter as ctk
 from tkinter import filedialog, END, Checkbutton, IntVar
 from tkinter import Tk
-import pyautogui
+# import pyautogui
 
 # Shared data structure for communication, e.g., a list, dict, Queue, etc.
+global shared_data
 shared_data = 0
+global text_widget
+global root
+global auto_scroll_var
+global tracker
+global scrolling
+
+def auto_scroll(textbox):
+    """Scrolls the textbox at a constant speed."""
+    global scrolling
+    global tracker
+    # y_value = tracker.shared_data / 25
+    # print("auto scroll func: ", scrolling, tracker.shared_data)
+
+    mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
+    # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
+
+    # if auto_scroll_var.get() and tracker.shared_data > 0.75:
+    if auto_scroll_var.get() and tracker.shared_data < -2:
+        textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
+        textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
+
+    # elif auto_scroll_var.get() and tracker.shared_data < 0.25:
+    elif auto_scroll_var.get() and tracker.shared_data > 20:
+        textbox.yview_scroll(-1, 'pixels')  # Scroll up by a small amount
+        textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
+
+    else:
+        scrolling = False  # Stop scrolling when mouse is not in the upper or lower quarter
 
 def run_app():
     def load_file():
@@ -37,19 +66,6 @@ def run_app():
     global scrolling # = False  # Flag to check if auto_scroll is already running
     scrolling = False
 
-    def auto_scroll(textbox):
-        """Scrolls the textbox at a constant speed."""
-        global scrolling
-        mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
-        # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
-        if auto_scroll_var.get() and mouse_y > 0.75:
-            textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
-            textbox.after(1, lambda: auto_scroll(textbox))  # Call itself after 1ms
-        elif mouse_y < 0.25:
-            textbox.yview_scroll(-1, 'pixels')  # Scroll up by a small amount
-            textbox.after(1, lambda: auto_scroll(textbox))  # Call itself after 1ms
-        else:
-            scrolling = False  # Stop scrolling when mouse is not in the upper or lower quarter
 
     def mouse_event(event):
         global scrolling
@@ -58,10 +74,12 @@ def run_app():
             scrolling = True
             auto_scroll(text_widget)
 
+    global root
     root = Tk()
     root.geometry('500x500')
     root.minsize(500, 500)
 
+    global text_widget
     text_widget = ctk.CTkTextbox(root)
     text_widget.place(relx=0.05, rely=0.025, relwidth=0.9, relheight=0.9)
     text_widget.configure(wrap='word', state='disable')
@@ -76,6 +94,7 @@ def run_app():
     dark_mode_switch = Checkbutton(frame, text="Dark Mode", variable=dark_mode, command=toggle_dark_mode)
     dark_mode_switch.grid(row=0, column=1, sticky=ctk.N+ctk.S)
 
+    global auto_scroll_var
     auto_scroll_var = IntVar()
     auto_scroll_switch = Checkbutton(frame, text="Auto Scroll", variable=auto_scroll_var)
     auto_scroll_switch.grid(row=0, column=2, sticky=ctk.N+ctk.S)
@@ -84,26 +103,47 @@ def run_app():
         dark_mode.set(1)
         toggle_dark_mode()
 
-    root.bind('<Motion>', mouse_event)
+    # root.bind('<Motion>', mouse_event)
 
     root.mainloop()
 
 def run_face_tracking():
+    global tracker
     tracker = Tracker(shared_data)
     tracker.start_video()
     # shared_data.append(tracker.get_vertical_angle())
     # print(shared_data)
     # a.start_video()
     
+def run_sampling():
+    global text_widget
+    global shared_data
+    global tracker
+    global scrolling
+    while True:
+        # print(shared_data)
+        # print("sampling loop: ", tracker.shared_data)
+        # print(text_widget)
+
+        if not scrolling:
+            scrolling = True
+            auto_scroll(text_widget)
+
+
+        time.sleep(0.25)
 
 # Create threads
 thread1 = threading.Thread(target=run_app)
 thread2 = threading.Thread(target=run_face_tracking)
+thread3 = threading.Thread(target=run_sampling)
 
 # Start threads
 thread1.start()
 thread2.start()
+time.sleep(4)
+thread3.start()
 
 # Wait for both threads to complete
 thread1.join()
 thread2.join()
+thread3.join()
