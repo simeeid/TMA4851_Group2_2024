@@ -18,7 +18,6 @@ def auto_scroll(textbox):
     """Scrolls the textbox at a constant speed."""
     global scrolling
     global tracker
-    # y_value = tracker.shared_data / 25
 
     mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
     # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
