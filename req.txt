@@ -1,4 +1,9 @@
 numpy
+scipy2
 pillow
 pygame
+pygaze
+customtkinter
+pyautogui
 psychopy
+pyglet
