@@ -13,7 +13,7 @@ class Tracker:
             raise IOError("Cannot open webcam")
         # Modelling tools
         self.detector = dlib.get_frontal_face_detector()
-        self.predictor = dlib.shape_predictor('classes/shape_predictor_68_face_landmarks.dat')
+        self.predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
         # Get screen dimensions
         self.screen_width = int(self.cap.get(3))
@@ -24,7 +24,6 @@ class Tracker:
         
         self.shared_data = shared_data
         self.running = True
-        self.filter = LowPassFilter(0.1)
 
     def get_vertical_angle(self):
         return self.vertical_angle
@@ -36,8 +35,8 @@ class Tracker:
 
     def start_video(self):
         # Main tracking loop
-        translation_filter = LowPassFilter(0.4)
-        rotation_filter = LowPassFilter(0.4)
+        translation_filter = LowPassFilter(0.25)
+        rotation_filter = LowPassFilter(0.25)
 
         while self.running:
             ret, frame = self.cap.read()
@@ -59,7 +58,8 @@ class Tracker:
                     # self.shared_data = -np.arcsin(smoothed_forward_vector[1] / 1000) * 180 / np.pi
                     # print(self.shared_data)
                     # notice change
-                    self.draw_vector(frame, np.array(nose_top), forward_vector, scale=self.vec_scale, color=(255, 0, 0), thickness=2)
+
+                    self.draw_vector(frame, np.array(nose_top), forward_vector, scale=self.vec_scale, color=(0, 255, 0), thickness=2)
                     
                 else :
                     print("No face detected")
