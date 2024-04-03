@@ -2,7 +2,7 @@ import threading
 from tracker import Tracker
 import time
 import customtkinter as ctk
-from tkinter import filedialog, END, Checkbutton, IntVar
+from tkinter import filedialog, END, Checkbutton, IntVar, Radiobutton
 from tkinter import Tk
 from gaze import Gaze
 
@@ -72,6 +72,8 @@ def run_app():
             dark_mode_switch.configure(bg='black', fg='white', selectcolor='black')
             tracker_scroll_switch.configure(bg='black', fg='white', selectcolor='black')
             gaze_scroll_switch.configure(bg='black', fg='white', selectcolor='black')
+            off_switch.configure(bg='black', fg='white', selectcolor='black')
+
             frame.configure(fg_color='black')
         else:
             root.configure(bg='white')
@@ -85,19 +87,24 @@ def run_app():
         global tracker
         global gaze_running
         global tracker_running
-        if not gaze_running:
-            if not tracker_running and not tracker.running:
-                print("Starting gaze tracker")
-                run_tracker("gaze")
-            else:
-                print("Face tracker is already runnin, please stop face tracker first.")
-            gaze_running = True
-        else:
-            if not tracker_running and tracker.running:
-                print("Stopping gaze since it is already running")
-                tracker.running = False
 
-            gaze_running = False
+        run_tracker("gaze")
+        tracker.start_camera()
+        tracker.start_video()
+
+        # if not gaze_running:
+        #     if not tracker_running and not tracker.running:
+        #         print("Starting gaze tracker")
+        #         run_tracker("gaze")
+        #     else:
+        #         print("Face tracker is already runnin, please stop face tracker first.")
+        #     gaze_running = True
+        # else:
+        #     if not tracker_running and tracker.running:
+        #         print("Stopping gaze since it is already running")
+        #         tracker.running = False
+
+        #     gaze_running = False
 
     def start_tracking():
         global tracker
@@ -116,6 +123,17 @@ def run_app():
                 tracker.running = False
 
             tracker_running = False
+
+    def stop_tracking():
+        global tracker
+        global gaze_running
+        global tracker_running
+        if gaze_running:
+            tracker.stop_camera()
+            tracker = None
+        elif tracker_running:
+            tracker.stop_camera()
+            tracker = None
 
     global scrolling # = False  # Flag to check if auto_scroll is already running
     scrolling = False
@@ -148,15 +166,28 @@ def run_app():
     dark_mode_switch = Checkbutton(frame, text="Dark Mode", variable=dark_mode, command=toggle_dark_mode)
     dark_mode_switch.grid(row=0, column=1, sticky=ctk.N+ctk.S)
 
-    global tracker_scroll_var
-    tracker_scroll_var = IntVar()
-    tracker_scroll_switch = Checkbutton(frame, text="Head tracking scroll", variable=tracker_scroll_var, command=start_tracking)
-    tracker_scroll_switch.grid(row=0, column=2, sticky=ctk.N+ctk.S)
+    
 
-    global gaze_scroll_var
-    gaze_scroll_var = IntVar()
-    gaze_scroll_switch = Checkbutton(frame, text="Eye gaze scroll", variable=gaze_scroll_var, command=start_gaze)
-    gaze_scroll_switch.grid(row=0, column=3, sticky=ctk.N+ctk.S)
+    global tracker_scroll_var
+    # tracker_scroll_var = IntVar()
+    # tracker_scroll_switch = Checkbutton(frame, text="Head tracking scroll", variable=tracker_scroll_var, command=start_tracking)
+    # tracker_scroll_switch.grid(row=0, column=2, sticky=ctk.N+ctk.S)
+
+    tracker_scroll_var = IntVar()
+    off_switch = Radiobutton(frame, text="Off", variable=tracker_scroll_var, value=0, command=stop_tracking)
+    off_switch.grid(row=0, column=2, sticky=ctk.N+ctk.S)
+
+    tracker_scroll_switch = Radiobutton(frame, text="Head tracking scroll", variable=tracker_scroll_var, value=1, command=start_tracking)
+    tracker_scroll_switch.grid(row=0, column=3, sticky=ctk.N+ctk.S)
+
+    #global gaze_scroll_var
+    # gaze_scroll_var = IntVar()
+    # gaze_scroll_switch = Checkbutton(frame, text="Eye gaze scroll", variable=gaze_scroll_var, command=start_gaze)
+    # gaze_scroll_switch.grid(row=0, column=3, sticky=ctk.N+ctk.S)
+
+    #gaze_scroll_var = IntVar()
+    gaze_scroll_switch = Radiobutton(frame, text="Eye gaze scroll", variable=tracker_scroll_var, value=2, command=start_gaze)
+    gaze_scroll_switch.grid(row=0, column=4, sticky=ctk.N+ctk.S)
 
     if(ctk.get_appearance_mode().lower() == 'dark'):
         dark_mode.set(1)
@@ -175,7 +206,7 @@ def run_face_tracking():
 def run_gaze_tracking():
     global tracker
     tracker = Gaze(shared_data_gaze)
-    tracker.start_video()
+    # tracker.start_video()
 
 def run_tracker(type):
     global thread2

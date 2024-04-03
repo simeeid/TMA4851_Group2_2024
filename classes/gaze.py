@@ -29,6 +29,12 @@ class Gaze:
 
         self.running = True
 
+    def start_camera(self):
+        self.cap = cv2.VideoCapture(0)
+
+    def stop_camera(self):
+        self.cap.release()
+        
     def get_vertical_angle(self):
         return self.vertical_angle
 
