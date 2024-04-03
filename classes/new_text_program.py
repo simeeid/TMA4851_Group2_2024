@@ -18,8 +18,10 @@ global tracker_gaze
 global thread_gaze
 global thread_face
 global scrolling
+global app_running
 shared_data_tracker = 0
 shared_data_gaze = 0
+app_running = True
 
 def auto_scroll(textbox):
     """Scrolls the textbox at a constant speed."""
@@ -27,9 +29,8 @@ def auto_scroll(textbox):
     global tracker
 
     mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
-    # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
 
-    print("tracker_scroll_var", tracker_scroll_var.get())
+    # print("tracker_scroll_var", tracker_scroll_var.get())
 
     if tracker_scroll_var.get() == 1 and tracker_face.shared_data < -2:
         textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
@@ -72,7 +73,6 @@ def run_app():
             tracker_scroll_switch.configure(bg='black', fg='white', selectcolor='black')
             gaze_scroll_switch.configure(bg='black', fg='white', selectcolor='black')
             off_switch.configure(bg='black', fg='white', selectcolor='black')
-
             frame.configure(fg_color='black')
         else:
             root.configure(bg='white')
@@ -80,6 +80,7 @@ def run_app():
             dark_mode_switch.configure(bg='white', fg='black', selectcolor='white')
             tracker_scroll_switch.configure(bg='white', fg='black', selectcolor='white')
             gaze_scroll_switch.configure(bg='white', fg='black', selectcolor='white')
+            off_switch.configure(bg='white', fg='black', selectcolor='white')
             frame.configure(fg_color='white')
 
     def start_gaze():
@@ -110,6 +111,8 @@ def run_app():
 
     global scrolling # = False  # Flag to check if auto_scroll is already running
     scrolling = False
+    global app_running
+    app_running = True
 
 
     def mouse_event(event):
@@ -142,9 +145,6 @@ def run_app():
     
 
     global tracker_scroll_var
-    # tracker_scroll_var = IntVar()
-    # tracker_scroll_switch = Checkbutton(frame, text="Head tracking scroll", variable=tracker_scroll_var, command=start_tracking)
-    # tracker_scroll_switch.grid(row=0, column=2, sticky=ctk.N+ctk.S)
 
     tracker_scroll_var = IntVar()
     off_switch = Radiobutton(frame, text="Off", variable=tracker_scroll_var, value=0, command=stop_tracking)
@@ -153,12 +153,6 @@ def run_app():
     tracker_scroll_switch = Radiobutton(frame, text="Head tracking scroll", variable=tracker_scroll_var, value=1, command=start_face)
     tracker_scroll_switch.grid(row=0, column=3, sticky=ctk.N+ctk.S)
 
-    #global gaze_scroll_var
-    # gaze_scroll_var = IntVar()
-    # gaze_scroll_switch = Checkbutton(frame, text="Eye gaze scroll", variable=gaze_scroll_var, command=start_gaze)
-    # gaze_scroll_switch.grid(row=0, column=3, sticky=ctk.N+ctk.S)
-
-    #gaze_scroll_var = IntVar()
     gaze_scroll_switch = Radiobutton(frame, text="Eye gaze scroll", variable=tracker_scroll_var, value=2, command=start_gaze)
     gaze_scroll_switch.grid(row=0, column=4, sticky=ctk.N+ctk.S)
 
@@ -168,9 +162,11 @@ def run_app():
 
     root.mainloop()
     stop_tracking()
+    app_running = False
 
 def run_face_tracking():
     global tracker_face
+    global app_running
     print("testface")
     tracker_face = Tracker(shared_data_tracker)
     tracker_face.start_camera()
@@ -185,6 +181,7 @@ def run_face_tracking():
     
 def run_gaze_tracking():
     global tracker_gaze
+    global app_running
     print("testgaze")
     tracker_gaze = Gaze(shared_data_gaze)
     tracker_gaze.start_camera()
@@ -195,14 +192,12 @@ def run_gaze_tracking():
             tracker_gaze.start_video()
 
         time.sleep(0.25)
-        
 
 def run_sampling():
     global text_widget
     global scrolling
+    global app_running
 
-    # global shared_data_tracker
-    # global shared_data_gaze
     global tracker_face
     global tracker_gaze
     
@@ -214,17 +209,12 @@ def run_sampling():
 
         time.sleep(0.25)
 
-        # print("gaze", shared_data_gaze)
-        print("gaze", tracker_gaze.detection)
-        # print("face", shared_data_tracker)
-        print("face", tracker_face.shared_data)
-
 
 # Create threads
 thread_app = threading.Thread(target=run_app)
-thread_sampling = threading.Thread(target=run_sampling)
-thread_gaze = threading.Thread(target=run_gaze_tracking)
-thread_face = threading.Thread(target=run_face_tracking)
+thread_sampling = threading.Thread(target=run_sampling, daemon=True)
+thread_gaze = threading.Thread(target=run_gaze_tracking, daemon=True)
+thread_face = threading.Thread(target=run_face_tracking, daemon=True)
 
 # Start threads / text application
 thread_app.start()
@@ -235,6 +225,3 @@ thread_sampling.start()
 
 # Wait for threads to complete
 thread_app.join()
-thread_face.join()
-thread_gaze.join()
-thread_sampling.join()
