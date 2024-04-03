@@ -4,3 +4,5 @@ pygame
 psychopy
 opencv-python
 dlib
+customtkinter
+tkinter
