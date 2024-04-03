@@ -7,6 +7,11 @@ import time
 
 class Gaze:
     def __init__(self, detection):
+         # detection 0 if looking center, 1 if looking down and 2 for looking up 
+        self.detection = detection
+        
+
+    def start_camera(self):
         self.cap = cv2.VideoCapture(0)
 
         if not self.cap.isOpened():
@@ -22,18 +27,15 @@ class Gaze:
         self.ear_values = {'Left': {'Up': 3.3, 'Center': 3.5, 'Down': 3.9}, 'Right': {'Up': 3.3, 'Center': 3.5, 'Down': 3.9}}
         
         self.ear_history = [0] * 10
-        self.look_down_start_time, self.look_up_start_time = None, None
+        self.look_down_start_time, self.look_up_start_time = None, None   
 
-        # detection 0 if looking center, 1 if looking down and 2 for looking up 
-        self.detection = detection         
+        self.running = False
 
-        self.running = True
-
-    def start_camera(self):
-        self.cap = cv2.VideoCapture(0)
 
     def stop_camera(self):
         self.cap.release()
+        self.running = False
+        self.cap = cv2.VideoCapture(0)
         
     def get_vertical_angle(self):
         return self.vertical_angle
