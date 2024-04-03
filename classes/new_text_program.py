@@ -19,7 +19,7 @@ def auto_scroll(textbox):
     global scrolling
     global tracker
 
-    mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
+    # mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
     # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
 
     if auto_scroll_var.get() and tracker.shared_data < -3:
@@ -63,12 +63,12 @@ def run_app():
     scrolling = False
 
 
-    def mouse_event(event):
-        global scrolling
-        y = event.y / root.winfo_height()
-        if (y > 0.75 or y < 0.25) and not scrolling and auto_scroll_var.get():
-            scrolling = True
-            auto_scroll(text_widget)
+    # def mouse_event(event):
+    #     global scrolling
+    #     y = event.y / root.winfo_height()
+    #     if (y > 0.75 or y < 0.25) and not scrolling and auto_scroll_var.get():
+    #         scrolling = True
+    #         auto_scroll(text_widget)
 
     global root
     root = Tk()
@@ -114,6 +114,14 @@ def run_sampling():
     global shared_data
     global tracker
     global scrolling
+    while True:
+        try:
+            tracker
+            break
+        except NameError:
+            print('Waiting for tracker to be initialized...')
+            continue
+
     while tracker.running:
 
         if not scrolling:
@@ -138,7 +146,5 @@ thread3.start()
 
 # Wait for both threads to complete
 thread2.join()
-time.sleep(2)
 thread1.join()
-time.sleep(2)
 thread3.join()
