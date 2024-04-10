@@ -23,15 +23,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install requrim
 
 ```bash
 pip install -r req.txt
-prosjektnavn [args]
-```
-
-## Usage
-
-```python
-# skriv kode her
-# hvordan man starter programmet
-# eksempler på ting man kan kjøre
+python classes/immersive_reader.py
 ```
 
 ## License
