@@ -7,6 +7,28 @@ from face import Face
 
 class Tracker:
     def __init__(self, shared_data):
+        self.shared_data = shared_data
+        # self.cap = cv2.VideoCapture(0)
+
+        # if not self.cap.isOpened():
+        #     raise IOError("Cannot open webcam")
+        # # Modelling tools
+        # self.detector = dlib.get_frontal_face_detector()
+        # self.predictor = dlib.shape_predictor('classes/shape_predictor_68_face_landmarks.dat')
+
+        # # Get screen dimensions
+        # self.screen_width = int(self.cap.get(3))
+        # self.screen_height = int(self.cap.get(4))
+    
+        # self.vec_sacle = 5
+        # self.epsilon = 10   
+        
+        # # self.vertical_angle = 0
+        # self.shared_data = shared_data                #tolerance for reaching target
+
+        # self.running = True
+
+    def start_camera(self):
         self.cap = cv2.VideoCapture(0)
 
         if not self.cap.isOpened():
@@ -22,8 +44,17 @@ class Tracker:
         self.vec_scale = 1
         self.epsilon = 10   
         
-        self.shared_data = shared_data
-        self.running = True
+        # self.shared_data = shared_data
+        # self.running = True
+        # self.vertical_angle = 0
+        # self.shared_data = shared_data                #tolerance for reaching target
+
+        self.running = False
+
+    def stop_camera(self):
+        self.cap.release()
+        self.running = False
+        self.cap = cv2.VideoCapture(0)
 
     def get_vertical_angle(self):
         return self.vertical_angle

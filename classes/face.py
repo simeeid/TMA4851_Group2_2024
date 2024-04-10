@@ -29,7 +29,10 @@ class Face:
         elif method == 'improved':
             self.vector, self.nose_top, self.horizontal_angle, self.vertical_angle = self.get_face_data_improved()
 
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 3)            
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 3)      
+
+    def stop_camera(self):
+        self.cap.release()      
 
     def draw_landmarks(self, frame):
         for n in range(0, 68):
