@@ -9,12 +9,6 @@ class Game:
 
         self.cords = cords  
         self.target_cords = np.array((cords[0][0]*self.screen_width, cords[0][1]*self.screen_height),dtype=int)
-
-    def target(self,endeffector):
-        pass
-
-
-    def balance(self):
-        pass    
+  
 
     

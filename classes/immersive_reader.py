@@ -28,18 +28,6 @@ def auto_scroll(textbox):
     global scrolling
     global tracker
 
-    # mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
-    # mouse_y = pyautogui.position()[1] / pyautogui.size()[1]
-
-    # if auto_scroll_var.get() and tracker.shared_data < -3:
-    #     textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
-    #     textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
-
-    # elif auto_scroll_var.get() and tracker.shared_data > 6:
-    mouse_y = root.winfo_pointerxy()[1] / root.winfo_screenheight()
-
-    # print("tracker_scroll_var", tracker_scroll_var.get())
-
     if tracker_scroll_var.get() == 1 and tracker_face.shared_data < -2:
         textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
@@ -49,17 +37,15 @@ def auto_scroll(textbox):
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
 
     elif tracker_scroll_var.get() == 2 and tracker_gaze.detection == 2:
-        print("gaze up")
         textbox.yview_scroll(-1, 'pixels')  # Scroll up by a small amount
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
 
     elif tracker_scroll_var.get() == 2 and tracker_gaze.detection == 1:
-        print("gaze down")
         textbox.yview_scroll(1, 'pixels')  # Scroll down by a small amount
         textbox.after(5, lambda: auto_scroll(textbox))  # Call itself after 1ms
 
     else:
-        scrolling = False  # Stop scrolling when mouse is not in the upper or lower quarter
+        scrolling = False  # Stop scrolling when eyes or face is not in the upper or lower parts
 
 def run_app():
     def load_file():
@@ -69,14 +55,13 @@ def run_app():
             with open(file_path, 'r') as file:
                 content = file.read()
                 text_widget.delete('0.0', END)
-                text_widget.insert(END, content)  # apply the correct color scheme after loading the file
+                text_widget.insert(END, content) 
         text_widget.configure(state='disable')
 
     def toggle_dark_mode():
         if dark_mode.get():
             root.configure(bg='black')
             ctk.set_appearance_mode('dark')
-            # make dark_mode_switch also dark
             dark_mode_switch.configure(bg='black', fg='white', selectcolor='black')
             tracker_scroll_switch.configure(bg='black', fg='white', selectcolor='black')
             gaze_scroll_switch.configure(bg='black', fg='white', selectcolor='black')
@@ -117,24 +102,10 @@ def run_app():
         tracker_face.stop_camera()
         tracker_gaze.stop_camera()
 
-    global scrolling # = False  # Flag to check if auto_scroll is already running
+    global scrolling 
     scrolling = False
     global app_running
     app_running = True
-
-
-    # def mouse_event(event):
-    #     global scrolling
-    #     y = event.y / root.winfo_height()
-    #     if (y > 0.75 or y < 0.25) and not scrolling and auto_scroll_var.get():
-    #         scrolling = True
-    #         auto_scroll(text_widget)
-    def mouse_event(event):
-        global scrolling
-        y = event.y / root.winfo_height()
-        if (y > 0.75 or y < 0.25) and not scrolling and tracker_scroll_var.get():
-            scrolling = True
-            auto_scroll(text_widget)
 
     global root
     root = Tk()
@@ -157,7 +128,6 @@ def run_app():
     dark_mode_switch.grid(row=0, column=1, sticky=ctk.N+ctk.S)
 
     
-
     global tracker_scroll_var
 
     tracker_scroll_var = IntVar()
@@ -181,7 +151,7 @@ def run_app():
 def run_face_tracking():
     global tracker_face
     global app_running
-    print("testface")
+    print("Face tracker initialized")
     tracker_face = Tracker(shared_data_tracker)
     tracker_face.start_camera()
 
@@ -196,7 +166,7 @@ def run_face_tracking():
 def run_gaze_tracking():
     global tracker_gaze
     global app_running
-    print("testgaze")
+    print("Gaze tracker initialized")
     tracker_gaze = Gaze(shared_data_gaze)
     tracker_gaze.start_camera()
 
@@ -210,15 +180,6 @@ def run_gaze_tracking():
 def run_sampling():
     global text_widget
     global scrolling
-    # while True:
-    #     try:
-    #         tracker
-    #         break
-    #     except NameError:
-    #         print('Waiting for tracker to be initialized...')
-    #         continue
-
-    # while tracker.running:
     global app_running
 
     global tracker_face
@@ -239,19 +200,6 @@ thread_sampling = threading.Thread(target=run_sampling, daemon=True)
 thread_gaze = threading.Thread(target=run_gaze_tracking, daemon=True)
 thread_face = threading.Thread(target=run_face_tracking, daemon=True)
 
-# Start threads
-# time.sleep(2)
-# thread2.start()
-# time.sleep(2)
-# thread1.start()
-# time.sleep(2)
-# thread3.start()
-
-# # Wait for both threads to complete
-# thread2.join()
-# thread1.join()
-# thread3.join()
-# Start threads / text application
 thread_app.start()
 thread_gaze.start()
 thread_face.start()
