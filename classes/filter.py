@@ -13,10 +13,10 @@ class LowPassFilter:
         else:
             # Apply the exponential moving average formula
             
-            print("new value:", new_value)
-            print("last filtered value:", self.last_filtered_value)
+            # print("new value:", new_value)
+            # print("last filtered value:", self.last_filtered_value)
             for i in range(len(new_value)):
                 for j in range(len(new_value[i])):
                     self.last_filtered_value[i][j] = self.alpha * new_value[i][j] + (1 - self.alpha) * self.last_filtered_value[i][j]
-        print("filtered value:", self.last_filtered_value)
+        # print("filtered value:", self.last_filtered_value)
         return self.last_filtered_value

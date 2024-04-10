@@ -13,7 +13,7 @@ class Tracker:
             raise IOError("Cannot open webcam")
         # Modelling tools
         self.detector = dlib.get_frontal_face_detector()
-        self.predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+        self.predictor = dlib.shape_predictor('classes/shape_predictor_68_face_landmarks.dat')
 
         # Get screen dimensions
         self.screen_width = int(self.cap.get(3))
