@@ -1,9 +1,10 @@
 import cv2
 import dlib
 import numpy as np
+from filter import LowPassFilter
 
 class Face:
-    def __init__(self, frame, face, gray, predictor, screen_width, screen_height, method='improved'):
+    def __init__(self, frame, face, gray, predictor, screen_width, screen_height, method='improved', translation_filter=None, rotation_filter=None):
         x, y, w, h = face.left(), face.top(), face.width(), face.height()
         self.center = (int(x), int(y))
         self.landmarks = predictor(gray, face)
@@ -18,6 +19,9 @@ class Face:
              [0, 0, 1]], dtype="double"
         )
         self.dist_coeffs = np.zeros((4, 1))  # Assuming no lens distortion
+        
+        self.rotation_filter = rotation_filter
+        self.translation_filter = translation_filter
         
         # Choose the calculation method
         if method == 'simple':
@@ -74,27 +78,37 @@ class Face:
 
         # Solve for pose
         _, rotation_vector, translation_vector = cv2.solvePnP(model_points, image_points, self.camera_matrix, self.dist_coeffs)
+        smoothed_translation_vector = self.translation_filter.apply_filter(translation_vector)
 
         # Convert rotation vector to rotation matrix
         rotation_matrix, _ = cv2.Rodrigues(rotation_vector)
+        smoothed_rotation_matrix = self.rotation_filter.apply_filter(rotation_matrix)
 
         # Construct a 3x4 projection matrix from the rotation matrix and translation vector
         projection_matrix = np.hstack((rotation_matrix, translation_vector))
+        smoothed_projection_matrix = np.hstack((smoothed_rotation_matrix, smoothed_translation_vector))
 
         # Now you can safely decompose the projection matrix
         euler_angles = cv2.decomposeProjectionMatrix(projection_matrix)[-1]
+        smoothed_euler_angles = cv2.decomposeProjectionMatrix(smoothed_projection_matrix)[-1]
 
         # Calculate horizontal and vertical angles
         horizontal_angle = euler_angles[1][0]  # Horizontal rotation
         vertical_angle = 180 - (euler_angles[0][0] % 360) # Vertical rotation
+        smoothed_horizontal_angle = smoothed_euler_angles[1][0]  # Horizontal rotation
+        smoothed_vertical_angle = 180 - (smoothed_euler_angles[0][0] % 360) # Vertical rotation
 
         # Project a 3D point to draw the direction vector
         nose_end_point3D = np.array([(0.0, 0.0, 1000.0)])
-        nose_end_point2D, _ = cv2.projectPoints(nose_end_point3D, rotation_vector, translation_vector, self.camera_matrix, self.dist_coeffs)
+        nose_end_point2D, _ = cv2.projectPoints(nose_end_point3D, rotation_matrix, translation_vector, self.camera_matrix, self.dist_coeffs)
+        smoothed_nose_end_point2D, _ = cv2.projectPoints(nose_end_point3D, smoothed_rotation_matrix, smoothed_translation_vector, self.camera_matrix, self.dist_coeffs)
 
         # Use draw_vector to draw the line
         p1 = (int(image_points[0][0]), int(image_points[0][1]))
         p2 = (int(nose_end_point2D[0][0][0]), int(nose_end_point2D[0][0][1]))
-        direction_vector = (p2[0] - p1[0], p2[1] - p1[1])
+        p3 = (int(smoothed_nose_end_point2D[0][0][0]), int(smoothed_nose_end_point2D[0][0][1]))
 
-        return direction_vector, p1, horizontal_angle, vertical_angle
+        direction_vector = (p2[0] - p1[0], p2[1] - p1[1])
+        smoothed_direction_vector = (p3[0] - p1[0], p3[1] - p1[1])
+
+        return smoothed_direction_vector, p1, smoothed_horizontal_angle, smoothed_vertical_angle

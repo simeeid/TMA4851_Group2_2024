@@ -184,14 +184,10 @@ class Gaze:
 
             cv2.putText(frame, "Press Enter to start calibration", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-            # cv2.namedWindow("Frame", cv2.WND_PROP_FULLSCREEN)
-            # cv2.setWindowProperty("Frame", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-
             if self.detection == 1:
                 cv2.putText(frame, "DOWN", (200, 400), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             elif self.detection == 2:
                 cv2.putText(frame, "UP", (200, 400), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-
 
             match cv2.waitKey(1):   # Exit on ESC
                 case 13:  
