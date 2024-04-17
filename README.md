@@ -1,6 +1,6 @@
 <p align="center">
   
-  <img src="img/temp_logo.png">
+  <img src="img/product_logo.png">
   
 </p>
 
@@ -8,10 +8,15 @@
 
   Prosjektnavn
 
+
+
+<h1 align="center">
+  
+  [![TMA Badge](https://img.shields.io/badge/TMA4851-Data%26Mind-blue?style=for-the-badge)](https://www.ntnu.no/eit/tma4851) 
+  [![Contributor Badge](https://img.shields.io/badge/Contributors-6-blue?style=for-the-badge)](https://github.com/simeeid/TMA4851_Group2_2024/graphs/contributors)   
+  
 </h1>
 
-[![TMA Badge](https://img.shields.io/badge/TMA4851-Data%26Mind-blue?style=for-the-badge)](https://www.ntnu.no/eit/tma4851)
-[![Contributor Badge](https://img.shields.io/badge/Contributors-6-blue?style=for-the-badge)](https://github.com/simeeid/TMA4851_Group2_2024/graphs/contributors)  
 
 
 ## Description 
