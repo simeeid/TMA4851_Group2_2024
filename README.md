@@ -25,6 +25,3 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install requrim
 pip install -r req.txt
 python classes/immersive_reader.py
 ```
-
-## License
-Valg av EN licenses  
