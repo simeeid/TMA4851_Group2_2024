@@ -1,0 +1,11 @@
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [1317.74, 0, 540, 0, 1317.74, 960, 0, 0, 1]
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0, 0, 0, 0, 0]
+
+  #image optical center x=960, y=540
+

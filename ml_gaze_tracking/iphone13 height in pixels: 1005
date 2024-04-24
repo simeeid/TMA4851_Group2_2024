@@ -1,0 +1,7 @@
+iphone13 height in image pixels: 1005
+iphoen13 depth in mm: 7.65 mm
+heigh in mm: 146.7 mm
+dist from cam to iphoene mm: 200mm - 7.65mm = 192.35mm
+
+
+focal_len = 1005 * 192.35 / 146.7
