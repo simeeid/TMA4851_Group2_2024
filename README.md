@@ -1,6 +1,6 @@
 <p align="center">
   
-  <img src="img/product_logo.png">
+  <img src="img/product_logo.png" width = 50% >
   
 </p>
 
